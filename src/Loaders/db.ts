@@ -1,13 +1,9 @@
-import mongoose , { ConnectOptions } from "mongoose";
+import mongoose from "mongoose";
 import config from "../config";
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(config.mongoURI, {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useUnifiedTopology: true,
-    } as ConnectOptions);
+    await mongoose.connect(config.mongoURI);
 
     console.log("Mongoose Connected ...");
   } catch (err) {

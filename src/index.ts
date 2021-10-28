@@ -2,15 +2,7 @@ import express from "express";
 const app = express();
 import connectDB from "./Loaders/db";
 import Users from "./models/Users";
-const schedule = require("node-schedule");
-const admin = require('firebase-admin');
-const rule = new schedule.RecurrenceRule();
 
-let serviceAccount = require('../bium-sever-firebase-adminsdk-y6tzj-9f976cbf9b.json'); 
-rule.tz = "Asia/Seoul";
-rule.hour = 20;
-rule.minute = 47;
-rule.second = 10;
 
 // Connect Database
 connectDB();
@@ -19,14 +11,6 @@ app.use(express.json());
 
 // Define Routes
 app.use("/users", require("./api/users"));
-app.use("/categories", require("./api/categories"));
-app.use("/writings", require("./api/writings"));
-app.use("/rewards", require("./api/rewards"));
-app.use("/presents", require("./api/presents"));
-app.use("/pushtokens",require("./api/pushtokens"));
-
-
-
 
 
 
