@@ -9,7 +9,7 @@ const UsersSchema = new mongoose.Schema({
   ispush: {
     type: Boolean,
     required: true,
-  },
+  }
 });
 
 export default mongoose.model< mongoose.Document>("Users", UsersSchema);

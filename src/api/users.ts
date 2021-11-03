@@ -5,8 +5,9 @@ import User from "../models/Users";
 import { check, validationResult } from "express-validator";
 import auth from "../middleware/auth";
 
-
 const router = Router();
+
+
 
 /**
  *  @route POST api/users
@@ -49,6 +50,7 @@ router.post(
           ispush,
         });
         await user.save();
+
         const payload = {
           user: {
             id: user.id,
