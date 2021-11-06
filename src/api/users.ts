@@ -117,11 +117,7 @@ router.patch("/", auth, async (req: Request, res: Response) => {
         ispush: req.body.ispush,
       });
     }
-    if (req.body.delperiod != null && typeof req.body.delperiod == "number") {
-      await User.findByIdAndUpdate(req.body.user.id, {
-        delperiod: req.body.delperiod,
-      });
-    }
+
     const user = await User.findById(req.body.user.id).select(
       "-device_id -_id -__v"
     );
