@@ -54,9 +54,10 @@ router.post(
                     else{
                 
                         var url = "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/"+encodeURI(req.body.name)+"?api_key="+key
-                        var info_json = 
+
                         await request(url, async function(err, res, body){
                               var info_json = JSON.parse(body);
+                         
                               const newFriend = await new Friend({
                                 user_id : req.body.user.id,
                                 name : req.body.name,
@@ -64,13 +65,15 @@ router.post(
                                 puuid : info_json.puuid,
                                 lol_id : info_json.id
                               });
-                        await newFriend.save();   
+                              await newFriend.save();
+                        
+                          
                         });
                     }
                     const friends = await Friend.find({
                       user_id: req.body.user.id,
                     }).select("-__v ");
-                    
+                 
                     res.status(201).json({ success: true, data: { friends } });
                     }
                 catch (err) {
@@ -101,13 +104,13 @@ router.get("/", auth, async (req: Request, res: Response) => {
   });
   
 
-router.delete("/:name", auth, async (req: Request, res: Response) => {
+router.delete("/", auth, async (req: Request, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ success: false, errors: errors.array() });
     }
     try {
-        await Friend.update({ name : req.body.name},
+        await Friend.update({ name : req.query.name},
           {$pull : { user_id : req.body.user.id}});
         const friends = await Friend.find({
           user_id: req.body.user.id,

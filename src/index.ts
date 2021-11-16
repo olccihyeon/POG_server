@@ -47,10 +47,14 @@ schedule.scheduleJob('10 * * * * *',  async () => {
         const tier = friends[i].tier
         const lose = friends[i].lose
         const win = friends[i].win
-        request(url_id, async function(err, res, body){
+        await request(url_id, async function(err, res, body){
           var info_json = JSON.parse(body);
-     
-          if(info_json[0].queueType == 'RANKED_SOLO_5x5')
+          
+          if(info_json.length == 0)
+          {
+             console.log("솔로랭크 유저가 아닙니다.")
+          }
+          else if(info_json[0].queueType == 'RANKED_SOLO_5x5')
           {
             console.log(info_json[0].losses)
             console.log(info_json[0].wins)
