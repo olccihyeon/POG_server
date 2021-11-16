@@ -110,7 +110,12 @@ router.delete("/", auth, async (req: Request, res: Response) => {
       return res.status(400).json({ success: false, errors: errors.array() });
     }
     try {
-        await Friend.update({ name : req.query.name},
+        const f = await Friend.findOne({ _id : req.query._id})
+        if(f.user_id.length == 1)
+        {
+           await Friend.deleteOne({_id : req.query._id})
+        }
+        await Friend.update({ _id : req.query._id},
           {$pull : { user_id : req.body.user.id}});
         const friends = await Friend.find({
           user_id: req.body.user.id,
