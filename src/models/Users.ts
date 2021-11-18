@@ -9,6 +9,10 @@ const UsersSchema = new mongoose.Schema({
   ispush: {
     type: Boolean,
     required: true,
+  },
+  pushtoken : {
+    type : String,
+    required : true
   }
 });
 

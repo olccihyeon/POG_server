@@ -26,6 +26,7 @@ router.post(
       return res.status(400).json({ success: false, errors: errors.array() });
     }
     const device_id = req.body.device_id;
+    const pushtoken = req.body.pushtoken;
     try {
       let user = await User.findOne({ device_id });
       if (user) {
@@ -48,6 +49,7 @@ router.post(
         user = new User({
           device_id,
           ispush,
+          pushtoken
         });
         await user.save();
 
