@@ -8,33 +8,6 @@ const schedule = require("node-schedule");
 var request = require("request");
 
 const key = "RGAPI-1402667a-c381-48e2-81b1-f47c84d54f84"
-// const rule = new schedule.RecurrenceRule();
-// rule.tz = "Asia/Seoul";
-// rule.hour = 17;
-// rule.minute = 15;
-// rule.second = 0;
-
-//fire base
-// const admin = require("firebase-admin");
-// let serviceAccount = require("../bium-sever-firebase-adminsdk-y6tzj-9f976cbf9b.json");
-
-
-
-// schedule.scheduleJob(rule, async () => {
-//   try {
-//     // if (!admin.apps.length) {
-//     //   admin.initializeApp({
-//     //     credential: admin.credential.cert(serviceAccount),
-//     //   });
-//     // }
-
-//     const friends = await Friend.find();
-//     console.log(friends[0]);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
-
 
 const admin = require('firebase-admin')
 let serAccount = require('../pog-player-of-the-game-firebase-adminsdk-ed8a5-ed5793a629.json')
@@ -61,43 +34,6 @@ schedule.scheduleJob('10 * * * * *',  async () => {
           if(info_json.length == 0)
           { 
              console.log("솔로랭크 유저가 아닙니다.")
-             const friends = await Friend.findOne({name : name});
-            //  const result = ['cOeWpFvwIU4Ih5zTh3Yasg:APA91bGO8leAvAI3OebMYNucOsAHkrmDRHgcGeAwoHEp1Yva5aAd8WoJ3sPrXgntiwWB0Hkf2gK9CWqvjftN_jUAVbHU_R_Uak-2791J5djmn0qJePl8al6-1d3jYFJBbeQNnMITPkz9'];
-            // //  for (let i = 0; i < friends.user_id.length; ++i) {
-            // //    const uid = await User.findOne({_id : friends.user_id[i]});
-            // //    result.push(uid.firebaseToken);
-            // //  }
-            // let message = {
-            //   notification: {
-            //     title: "전적 및 승급 알림",
-            //     body: " ${name}님은 솔로랭크 유저가 아닙니다."
-            //   },
-            // };
-            // admin
-            //   .messaging()
-            //   .sendToDevice(result, message)
-            //   .then(function (response) {
-            //     console.log("Successfully sent message: : ", response);
-            //   })
-            //   .catch(function (err) {
-            //     console.log("Error Sending message!!! : ", err);
-            //   });
-            var token = 'cOeWpFvwIU4Ih5zTh3Yasg:APA91bGO8leAvAI3OebMYNucOsAHkrmDRHgcGeAwoHEp1Yva5aAd8WoJ3sPrXgntiwWB0Hkf2gK9CWqvjftN_jUAVbHU_R_Uak-2791J5djmn0qJePl8al6-1d3jYFJBbeQNnMITPkz9';
-        
-            var message = {
-                notification: {
-                  title: "전적 및 승급 알림",
-                  body: " ${name}님은 솔로랭크 유저가 아닙니다."
-                },
-                token : token
-              };
-            admin.messaging().send(message)    
-              .then(function (response) {
-                  console.log("Successfully sent message: : ", response);
-                })
-                .catch(function (err) {
-                  console.log("Error Sending message!!! : ", err);
-                });
            
           }
           else if(info_json[0].queueType == 'RANKED_SOLO_5x5')
@@ -107,18 +43,96 @@ schedule.scheduleJob('10 * * * * *',  async () => {
             if((info_json[0].losses - Number(lose)) ==1)
             {
               console.log("최근 경기를 패배하셨습니다.")
+              
+             
+              const friends = await Friend.findOne({name : name});
+              const result = ['cOeWpFvwIU4Ih5zTh3Yasg:APA91bGO8leAvAI3OebMYNucOsAHkrmDRHgcGeAwoHEp1Yva5aAd8WoJ3sPrXgntiwWB0Hkf2gK9CWqvjftN_jUAVbHU_R_Uak-2791J5djmn0qJePl8al6-1d3jYFJBbeQNnMITPkz9'];
+              for (let i = 0; i < friends.user_id.length; ++i) {
+                const uid = await User.findOne({_id : friends.user_id[i]});
+                result.push(String(uid.firebaseToken));
+              }
               if(info_json[0].rank!=rank)
               {
-                console.log("강등도 당하셨네요")
+                let message = {
+                  notification: {
+                    title: "전적 및 승급 알림",
+                    body: name + "님이 최근 게임에서 패배하며 강등당했습니다."
+                  },
+                };
+                admin
+                .messaging()
+                .sendToDevice(result, message)
+                .then(function (response) {
+                  console.log("Successfully sent message: : ", response);
+                })
+                .catch(function (err) {
+                  console.log("Error Sending message!!! : ", err);
+                });
               }
-
+              else{
+                let message = {
+                  notification: {
+                    title: "전적 및 승급 알림",
+                    body: name + "님이 최근 게임에서 패배했습니다."
+                  },
+                };
+                admin
+                .messaging()
+                .sendToDevice(result, message)
+                .then(function (response) {
+                  console.log("Successfully sent message: : ", response);
+                })
+                .catch(function (err) {
+                  console.log("Error Sending message!!! : ", err);
+                });
+              }
+              
+          
             }
             else if((info_json[0].wins- Number(win)) ==1)
             {
               console.log("최근 경기를 승리하셨습니다.")
+                
+              const friends = await Friend.findOne({name : name});
+              const result = ['cOeWpFvwIU4Ih5zTh3Yasg:APA91bGO8leAvAI3OebMYNucOsAHkrmDRHgcGeAwoHEp1Yva5aAd8WoJ3sPrXgntiwWB0Hkf2gK9CWqvjftN_jUAVbHU_R_Uak-2791J5djmn0qJePl8al6-1d3jYFJBbeQNnMITPkz9'];
+              for (let i = 0; i < friends.user_id.length; ++i) {
+                const uid = await User.findOne({_id : friends.user_id[i]});
+                result.push(String(uid.firebaseToken));
+              }
               if(info_json[0].rank!=rank)
               {
-                console.log("승급하셨네요")
+                let message = {
+                  notification: {
+                    title: "전적 및 승급 알림",
+                    body: name + "님이 최근 게임에서 승리하며 승급했습니다."
+                  },
+                };
+                admin
+                .messaging()
+                .sendToDevice(result, message)
+                .then(function (response) {
+                  console.log("Successfully sent message: : ", response);
+                })
+                .catch(function (err) {
+                  console.log("Error Sending message!!! : ", err);
+                });
+              }
+              else{
+                let message = {
+                  notification: {
+                    title: "전적 및 승급 알림",
+                    body: name + "님이 최근 게임에서 승리했습니다."
+                  },
+                };
+                admin
+                .messaging()
+                .sendToDevice(result, message)
+                .then(function (response) {
+                  console.log("Successfully sent message: : ", response);
+                })
+                .catch(function (err) {
+                  console.log("Error Sending message!!! : ", err);
+                });
               }
             }
             else if((info_json[0].wins - Number(win)) ==0)
@@ -143,18 +157,93 @@ schedule.scheduleJob('10 * * * * *',  async () => {
             if((info_json[0].losses - Number(lose)) ==1)
             {
               console.log("최근 경기를 패배하셨습니다.")
-              if(info_json[1].rank!=rank)
+               
+              const friends = await Friend.findOne({name : name});
+              const result = ['cOeWpFvwIU4Ih5zTh3Yasg:APA91bGO8leAvAI3OebMYNucOsAHkrmDRHgcGeAwoHEp1Yva5aAd8WoJ3sPrXgntiwWB0Hkf2gK9CWqvjftN_jUAVbHU_R_Uak-2791J5djmn0qJePl8al6-1d3jYFJBbeQNnMITPkz9'];
+              for (let i = 0; i < friends.user_id.length; ++i) {
+                const uid = await User.findOne({_id : friends.user_id[i]});
+                result.push(String(uid.firebaseToken));
+              }
+              if(info_json[0].rank!=rank)
               {
-                console.log("강등도 당하셨네요")
+                let message = {
+                  notification: {
+                    title: "전적 및 승급 알림",
+                    body: name + "님이 최근 게임에서 패배하며 강등당했습니다."
+                  },
+                };
+                admin
+                .messaging()
+                .sendToDevice(result, message)
+                .then(function (response) {
+                  console.log("Successfully sent message: : ", response);
+                })
+                .catch(function (err) {
+                  console.log("Error Sending message!!! : ", err);
+                });
+              }
+              else{
+                let message = {
+                  notification: {
+                    title: "전적 및 승급 알림",
+                    body: name + "님이 최근 게임에서 패배했습니다."
+                  },
+                };
+                admin
+                .messaging()
+                .sendToDevice(result, message)
+                .then(function (response) {
+                  console.log("Successfully sent message: : ", response);
+                })
+                .catch(function (err) {
+                  console.log("Error Sending message!!! : ", err);
+                });
               }
 
             }
             else if((info_json[0].wins - Number(win)) ==1)
             {
               console.log("최근 경기를 승리하셨습니다.")
-              if(info_json[1].rank!=readlink)
+              const friends = await Friend.findOne({name : name});
+              const result = ['cOeWpFvwIU4Ih5zTh3Yasg:APA91bGO8leAvAI3OebMYNucOsAHkrmDRHgcGeAwoHEp1Yva5aAd8WoJ3sPrXgntiwWB0Hkf2gK9CWqvjftN_jUAVbHU_R_Uak-2791J5djmn0qJePl8al6-1d3jYFJBbeQNnMITPkz9'];
+              for (let i = 0; i < friends.user_id.length; ++i) {
+                const uid = await User.findOne({_id : friends.user_id[i]});
+                result.push(String(uid.firebaseToken));
+              }
+              if(info_json[0].rank!=rank)
               {
-                console.log("승급하셨네요")
+                let message = {
+                  notification: {
+                    title: "전적 및 승급 알림",
+                    body: name + "님이 최근 게임에서 승리하며 승급했습니다."
+                  },
+                };
+                admin
+                .messaging()
+                .sendToDevice(result, message)
+                .then(function (response) {
+                  console.log("Successfully sent message: : ", response);
+                })
+                .catch(function (err) {
+                  console.log("Error Sending message!!! : ", err);
+                });
+              }
+              else{
+                let message = {
+                  notification: {
+                    title: "전적 및 승급 알림",
+                    body: name + "님이 최근 게임에서 승리했습니다."
+                  },
+                };
+                admin
+                .messaging()
+                .sendToDevice(result, message)
+                .then(function (response) {
+                  console.log("Successfully sent message: : ", response);
+                })
+                .catch(function (err) {
+                  console.log("Error Sending message!!! : ", err);
+                });
               }
             }
             else if((info_json[0].wins - Number(win)) ==0)
