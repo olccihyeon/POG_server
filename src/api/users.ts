@@ -26,7 +26,7 @@ router.post(
       return res.status(400).json({ success: false, errors: errors.array() });
     }
     const device_id = req.body.device_id;
-    const pushtoken = req.body.pushtoken;
+    const pushtoken = req.body.firebaseToken;
     try {
       let user = await User.findOne({ device_id });
       if (user) {

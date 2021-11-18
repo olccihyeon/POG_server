@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import { IUsers } from "../interfaces/IUsers";
 
 const UsersSchema = new mongoose.Schema({
   device_id: {
@@ -10,10 +10,10 @@ const UsersSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
-  pushtoken : {
+  firebaseToken : {
     type : String,
     required : true
   }
 });
 
-export default mongoose.model< mongoose.Document>("Users", UsersSchema);
+export default mongoose.model< IUsers & mongoose.Document>("Users", UsersSchema);

@@ -3,6 +3,7 @@ import { readlink } from "fs/promises";
 const app = express();
 import connectDB from "./Loaders/db";
 import Friend from "./models/Friends";
+import User from "./models/Users";
 const schedule = require("node-schedule");
 var request = require("request");
 
@@ -33,8 +34,15 @@ const key = "RGAPI-1402667a-c381-48e2-81b1-f47c84d54f84"
 //     console.log(err);
 //   }
 // });
+
+
+const admin = require('firebase-admin')
+let serAccount = require('../pog-player-of-the-game-firebase-adminsdk-ed8a5-ed5793a629.json')
+
+admin.initializeApp({
+  credential: admin.credential.cert(serAccount),
+})
 schedule.scheduleJob('10 * * * * *',  async () => {
-   
     try {      
       const friends = await Friend.find();
       const cnt = await Friend.find().count();
@@ -51,8 +59,46 @@ schedule.scheduleJob('10 * * * * *',  async () => {
           var info_json = JSON.parse(body);
           
           if(info_json.length == 0)
-          {
+          { 
              console.log("솔로랭크 유저가 아닙니다.")
+             const friends = await Friend.findOne({name : name});
+            //  const result = ['cOeWpFvwIU4Ih5zTh3Yasg:APA91bGO8leAvAI3OebMYNucOsAHkrmDRHgcGeAwoHEp1Yva5aAd8WoJ3sPrXgntiwWB0Hkf2gK9CWqvjftN_jUAVbHU_R_Uak-2791J5djmn0qJePl8al6-1d3jYFJBbeQNnMITPkz9'];
+            // //  for (let i = 0; i < friends.user_id.length; ++i) {
+            // //    const uid = await User.findOne({_id : friends.user_id[i]});
+            // //    result.push(uid.firebaseToken);
+            // //  }
+            // let message = {
+            //   notification: {
+            //     title: "전적 및 승급 알림",
+            //     body: " ${name}님은 솔로랭크 유저가 아닙니다."
+            //   },
+            // };
+            // admin
+            //   .messaging()
+            //   .sendToDevice(result, message)
+            //   .then(function (response) {
+            //     console.log("Successfully sent message: : ", response);
+            //   })
+            //   .catch(function (err) {
+            //     console.log("Error Sending message!!! : ", err);
+            //   });
+            var token = 'cOeWpFvwIU4Ih5zTh3Yasg:APA91bGO8leAvAI3OebMYNucOsAHkrmDRHgcGeAwoHEp1Yva5aAd8WoJ3sPrXgntiwWB0Hkf2gK9CWqvjftN_jUAVbHU_R_Uak-2791J5djmn0qJePl8al6-1d3jYFJBbeQNnMITPkz9';
+        
+            var message = {
+                notification: {
+                  title: "전적 및 승급 알림",
+                  body: " ${name}님은 솔로랭크 유저가 아닙니다."
+                },
+                token : token
+              };
+            admin.messaging().send(message)    
+              .then(function (response) {
+                  console.log("Successfully sent message: : ", response);
+                })
+                .catch(function (err) {
+                  console.log("Error Sending message!!! : ", err);
+                });
+           
           }
           else if(info_json[0].queueType == 'RANKED_SOLO_5x5')
           {
