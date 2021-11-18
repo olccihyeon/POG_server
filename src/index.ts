@@ -143,7 +143,7 @@ app.use(express.json());
 
 // Define Routes
 app.use("/users", require("./api/users"));
-app.use("/friends", require("./api/friends"));
+app.use("/friends", require("./api/friend"));
 
 
 // error handler
