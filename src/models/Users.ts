@@ -10,10 +10,10 @@ const UsersSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
-  firebaseToken : {
-    type : String,
-    required : true
-  }
+  firebaseToken: {
+    type: String,
+    required: true,
+  },
 });
 
-export default mongoose.model< IUsers & mongoose.Document>("Users", UsersSchema);
+export default mongoose.model<IUsers & mongoose.Document>("Users", UsersSchema);

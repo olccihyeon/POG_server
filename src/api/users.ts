@@ -7,8 +7,6 @@ import auth from "../middleware/auth";
 
 const router = Router();
 
-
-
 /**
  *  @route POST api/users
  *  @desc Create a user
@@ -17,7 +15,9 @@ const router = Router();
 
 router.post(
   "/",
-  [check("device_id", "id is required").not().isEmpty(),
+  [
+    check("device_id", "id is required").not().isEmpty(),
+    check("firebaseToken", "fcmtoken is required").not().isEmpty(),
   ],
   async (req: Request, res: Response) => {
     const errors = validationResult(req);
@@ -25,8 +25,10 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ success: false, errors: errors.array() });
     }
+    console.log(req.body);
     const device_id = req.body.device_id;
-    const pushtoken = req.body.firebaseToken;
+    const firebaseToken = req.body.firebaseToken;
+    console.log(req.body);
     try {
       let user = await User.findOne({ device_id });
       if (user) {
@@ -46,11 +48,13 @@ router.post(
         );
       } else {
         let ispush = true;
+
         user = new User({
           device_id,
           ispush,
-          pushtoken
+          firebaseToken,
         });
+
         await user.save();
 
         const payload = {
@@ -58,6 +62,7 @@ router.post(
             id: user.id,
           },
         };
+
         jwt.sign(
           payload,
           config.jwtSecret,
