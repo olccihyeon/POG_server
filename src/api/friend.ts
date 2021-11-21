@@ -38,8 +38,9 @@ router.post(
             res.status(409).json({ success: false, message: "즐겨찾기 5명 초과" });
         }
         else
-        {
-            if (checkname[0]) {
+        {   
+     
+            if (checkname) {
             res.status(409).json({ success: false, message: "중복된 이름 존재" });
             } else 
             {
