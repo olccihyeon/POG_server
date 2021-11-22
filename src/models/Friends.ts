@@ -35,6 +35,9 @@ const FriendsSchema = new mongoose.Schema({
   },
   lol_id : {
     type : String,
+  },
+  leaguePoint : {
+    type : Number,
   }
 
   

@@ -10,4 +10,5 @@ export interface IFriends {
   profileIconId : Number;
   puuid : String;
   lol_id : String;
+  leaguePoint : Number;
 }

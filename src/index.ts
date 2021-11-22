@@ -38,8 +38,7 @@ schedule.scheduleJob('10 * * * * *',  async () => {
           }
           else if(info_json[0].queueType == 'RANKED_SOLO_5x5')
           {
-            console.log(info_json[0].losses)
-            console.log(info_json[0].wins)
+          
             if((info_json[0].losses - Number(lose)) ==1)
             {
               console.log("최근 경기를 패배하셨습니다.")
@@ -147,14 +146,15 @@ schedule.scheduleJob('10 * * * * *',  async () => {
                 lose : info_json[0].losses,
                 win : info_json[0].wins,
                 tier : info_json[0].tier,
-                rank : info_json[0].rank
+                rank : info_json[0].rank,
+                leaguePoint : info_json[0].leaguePoints,
               }
             })
            
             
           }
           else{
-            if((info_json[0].losses - Number(lose)) ==1)
+            if((info_json[1].losses - Number(lose)) ==1)
             {
               console.log("최근 경기를 패배하셨습니다.")
                
@@ -164,7 +164,7 @@ schedule.scheduleJob('10 * * * * *',  async () => {
                 const uid = await User.findOne({_id : friends.user_id[i]});
                 result.push(String(uid.firebaseToken));
               }
-              if(info_json[0].rank!=rank)
+              if(info_json[1].rank!=rank)
               {
                 let message = {
                   notification: {
@@ -201,7 +201,7 @@ schedule.scheduleJob('10 * * * * *',  async () => {
               }
 
             }
-            else if((info_json[0].wins - Number(win)) ==1)
+            else if((info_json[1].wins - Number(win)) ==1)
             {
               console.log("최근 경기를 승리하셨습니다.")
               const friends = await Friend.findOne({name : name});
@@ -210,7 +210,7 @@ schedule.scheduleJob('10 * * * * *',  async () => {
                 const uid = await User.findOne({_id : friends.user_id[i]});
                 result.push(String(uid.firebaseToken));
               }
-              if(info_json[0].rank!=rank)
+              if(info_json[1].rank!=rank)
               {
                 let message = {
                   notification: {
@@ -246,7 +246,7 @@ schedule.scheduleJob('10 * * * * *',  async () => {
                 });
               }
             }
-            else if((info_json[0].wins - Number(win)) ==0)
+            else if((info_json[1].wins - Number(win)) ==0)
             {
               console.log("최근 경기가 없었습니다.")
             }
@@ -255,10 +255,11 @@ schedule.scheduleJob('10 * * * * *',  async () => {
             },
             {
               $set: {
-                lose : info_json[0].losses,
-                win : info_json[0].wins,
+                lose : info_json[1].losses,
+                win : info_json[1].wins,
                 tier : info_json[1].tier,
-                rank : info_json[1].rank
+                rank : info_json[1].rank,
+                leaguePoint : info_json[1].leaguePoints,
               }
             })
           }

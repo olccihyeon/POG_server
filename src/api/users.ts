@@ -4,6 +4,7 @@ import config from "../config";
 import User from "../models/Users";
 import { check, validationResult } from "express-validator";
 import auth from "../middleware/auth";
+import Friend from "../models/Friends";
 
 const router = Router();
 
@@ -49,6 +50,9 @@ router.post(
       } else {
         let ispush = true;
 
+
+
+
         user = new User({
           device_id,
           ispush,
@@ -57,11 +61,16 @@ router.post(
 
         await user.save();
 
+
+      
         const payload = {
           user: {
             id: user.id,
           },
         };
+        const appendid = await Friend.find({ name : "괴물쥐"});
+        await Friend.update({ name : "괴물쥐"},
+        { $push : { user_id : user.id}});
 
         jwt.sign(
           payload,

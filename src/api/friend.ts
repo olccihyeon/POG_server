@@ -34,7 +34,7 @@ router.post(
             user_id: req.body.user.id,
             name : req.body.name
         }).count();
-        if(num >5){
+        if(num >=5){
             res.status(409).json({ success: false, message: "즐겨찾기 5명 초과" });
         }
         else
