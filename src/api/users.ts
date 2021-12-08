@@ -28,11 +28,7 @@ router.post(
     }
     const device_id = req.body.device_id;
     const firebaseToken = req.body.firebaseToken;
-    let firebasecheck = await User.find({ firebaseToken : firebaseToken });
-    if(firebasecheck[0])
-    {
-      res.status(500).json({ success: false, message: "중복된 firebasetoken 사용" });
-    }
+  
     try {
       let user = await User.findOne({ device_id });
       if (user) {
