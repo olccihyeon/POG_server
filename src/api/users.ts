@@ -26,10 +26,13 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ success: false, errors: errors.array() });
     }
-    console.log(req.body);
     const device_id = req.body.device_id;
     const firebaseToken = req.body.firebaseToken;
-    console.log(req.body);
+    let firbasecheck = await User.find({ firebaseToken : firebaseToken });
+    if(firebaseToken[0])
+    {
+      res.status(500).json({ success: false, message: "중복된 firebasetoken 사용" });
+    }
     try {
       let user = await User.findOne({ device_id });
       if (user) {
@@ -49,10 +52,6 @@ router.post(
         );
       } else {
         let ispush = true;
-
-
-
-
         user = new User({
           device_id,
           ispush,
@@ -60,9 +59,6 @@ router.post(
         });
 
         await user.save();
-
-
-      
         const payload = {
           user: {
             id: user.id,

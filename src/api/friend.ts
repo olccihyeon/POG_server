@@ -2,12 +2,13 @@ import express, { Router, Request, Response } from "express";
 import Friend from "../models/Friends";
 import { check, validationResult } from "express-validator";
 import auth from "../middleware/auth";
+import Friends from "../models/Friends";
 
 
 const router = Router();
 
 
-var request = require("request");
+var request = require("request-promise-native");
 
 const key = "RGAPI-1402667a-c381-48e2-81b1-f47c84d54f84"
 /**
@@ -51,32 +52,39 @@ router.post(
                     {
                       await Friend.update({ name : req.body.name},
                       { $push : { user_id : req.body.user.id}});
+
+                      const friends = await Friend.find({
+                        user_id: req.body.user.id,
+                      }).select("-__v ");
+                  
+                      res.status(201).json({ success: true, data: { friends } });
                     }
                     else{
                 
                         var url = "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/"+encodeURI(req.body.name)+"?api_key="+key
-
-                        await request(url, async function(err, res, body){
-                              var info_json = JSON.parse(body);
-                         
-                              const newFriend = await new Friend({
-                                user_id : req.body.user.id,
-                                name : req.body.name,
-                                profileIconId : info_json.profileIconId,
-                                puuid : info_json.puuid,
-                                lol_id : info_json.id
-                              });
-                              await newFriend.save();
-                        
-                          
-                        });
-                    }
-                    const friends = await Friend.find({
+                  
+                      const response1 = await request(url, async function(err, res, body){});
+                      var info_json = JSON.parse(response1)
+                      const newFriend = await new Friend({
+                            user_id : req.body.user.id,
+                            name : req.body.name,
+                            profileIconId : info_json.profileIconId,
+                            puuid : info_json.puuid,
+                            lol_id : info_json.id
+                          });
+                      await newFriend.save();
+                  
+                      const friend1s = await Friend.find({
                       user_id: req.body.user.id,
-                    }).select("-__v ");
-                 
-                    res.status(201).json({ success: true, data: { friends } });
-                    }
+                      }).select("-__v ");
+                
+                      await res.status(201).json({ success: true, data: { friend1s } });
+                             
+                       
+                      
+                      }
+                  }
+                
                 catch (err) {
                 console.error(err.message);
                 res.status(500).json({ success: false, message: "서버 오류" });
